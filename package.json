@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/chexovpert/nodejs-rscourse-task1#readme",
   "dependencies": {
-    "chalk": "^4.1.1"
+    "chalk": "^4.1.1",
+    "commander": "^7.2.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
