@@ -1,0 +1,29 @@
+{
+  "name": "caesar-node",
+  "version": "1.0.0",
+  "description": "cli tool",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chexovpert/nodejs-rscourse-task1.git"
+  },
+  "keywords": [
+    "js",
+    "node"
+  ],
+  "author": "chexovpert",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chexovpert/nodejs-rscourse-task1/issues"
+  },
+  "homepage": "https://github.com/chexovpert/nodejs-rscourse-task1#readme",
+  "dependencies": {
+    "chalk": "^4.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
