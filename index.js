@@ -1,7 +1,10 @@
+//@ts-check
 const chalk = require("chalk");
 const text = require("./data");
 const fs = require("fs");
 const path = require("path");
+
+const commander = require("commander"); // include commander in git clone of commander repo
 
 //console.log(chalk.blue(text))
 //console.log(__dirname)
@@ -38,8 +41,8 @@ const createfile = function () {
   });
 };
 console.log();
-const encryption = (shift) => {
-  if (shift > 26) {
+const encryption = (shift, inputpath, outputpath) => {
+  if (shift >= 26) {
     shift = shift % 26;
   }
   fs.readFile(inputpath, "utf-8", (err, content) => {
@@ -65,7 +68,7 @@ const encryption = (shift) => {
     });
     console.log(encrypteddata.join(""));
     const encrypteddatatext = encrypteddata.join("");
-    fs.writeFile(outputpath, encrypteddatatext, (err) => {
+    fs.appendFile(outputpath, `${encrypteddatatext}\n`, (err) => {
       if (err) {
         throw err;
       }
@@ -109,6 +112,34 @@ const decryption = (shift) => {
   });
 };
 
+const program = new commander.Command();
+
+program
+  .option("-s, --shift <number>", "encryption/decryption shift", parseInt)
+  .option("-i, --input <path>", "input file path")
+  .option("-o, --output <path>", "output file path", "stdout")
+  .option("-a, --action <type>", "action type (encode or decode)")
+  .parse(process.argv);
+
+//program.parse(process.argv);
+
+const options = program.opts();
+console.log(options);
+process.stdout.write("hey");
+const shift = options.shift !== undefined ? options.shift : "nosauce";
+const inputpath1 = path.join(__dirname, options.input);
+const outputpath1 = path.join(__dirname, options.output);
+if (options.action === "encode") {
+  encryption(shift, inputpath1, outputpath1);
+}
+// if( options.action === "decode") {
+//     encryption(shift, inputpath1, outputpath1);
+// }
+//const shift = options
+//if (options.shift) console.log(shift);
+//console.log("pizza details:");
+//if (options.small) console.log("- small pizza size");
+//if (options.pizzaType) console.log(`- ${options.pizzaType}`);
 //createfile()
-//encryption(53)
+//encryption(53);
 //decryption(53)
