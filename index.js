@@ -1,115 +1,112 @@
 //@ts-check
-const chalk = require("chalk");
-const text = require("./data");
 const fs = require("fs");
 const path = require("path");
-
 const commander = require("commander"); // include commander in git clone of commander repo
 
-//console.log(chalk.blue(text))
-//console.log(__dirname)
-//console.log(path.dirname(__filename))
-//console.log(__filename)
-//console.log(path.basename(__filename))
-//console.log(path.basename(__dirname))
-// const folderpath = path.join(__dirname, "files")
-// console.log(folderpath)
-// function makeDir() {
-//     fs.mkdir(folderpath,(err) => {
-//         if (err) {
-//             throw err
-//         }
-//         console.log("folder has been created")
-//     })
-// }
-//makeDir()
-const inputpath = path.join(__dirname, "files", "input.txt");
-const outputpath = path.join(__dirname, "files", "output.txt");
-const newpath = path.join(__dirname, "files", "newpath.txt");
-const createfile = function () {
-  fs.writeFile(inputpath, "hello node", (err) => {
-    if (err) {
-      throw err;
-    }
-    //console.log("file has been created")
-  });
-  fs.appendFile(inputpath, "\nhello again", (err) => {
-    if (err) {
-      throw err;
-    }
-    //console.log("file has been updated")
-  });
-};
-console.log();
-const encryption = (shift, inputpath, outputpath) => {
+const encryption = (shift, inputpath, outputpath, decription = false) => {
+  if (decription) {
+    shift = -shift;
+  }
   if (shift >= 26) {
     shift = shift % 26;
   }
-  fs.readFile(inputpath, "utf-8", (err, content) => {
-    if (err) {
-      throw err;
-    }
-    console.log(content);
-    const inputdata = content.toLowerCase().split("");
-    const encrypteddata = [];
-    inputdata.forEach((elem) => {
-      if (
-        (elem.charCodeAt(0) &&
-          elem.charCodeAt(0) >= 65 &&
-          elem.charCodeAt(0) <= 90) ||
-        (elem.charCodeAt(0) >= 97 && elem.charCodeAt(0) <= 122)
-      ) {
-        elem = String.fromCharCode(elem.charCodeAt(0) + shift);
-        encrypteddata.push(elem);
-        return;
-        //console.log(elem)
-      }
-      encrypteddata.push(elem);
-    });
-    console.log(encrypteddata.join(""));
-    const encrypteddatatext = encrypteddata.join("");
-    fs.appendFile(outputpath, `${encrypteddatatext}\n`, (err) => {
-      if (err) {
-        throw err;
-      }
-      console.log("file has been encrypted");
-    });
-  });
-};
-const decryption = (shift) => {
-  if (shift > 26) {
-    shift = shift % 26;
+  if (shift < 0) {
+    shift = 26 - Math.abs(shift % 26);
   }
-  fs.readFile(outputpath, "utf-8", (err, content) => {
-    if (err) {
-      throw err;
-    }
-    console.log(content);
-    const inputdata = content.toLowerCase().split("");
-    const encrypteddata = [];
-    inputdata.forEach((elem) => {
-      if (
-        (elem.charCodeAt(0) &&
-          elem.charCodeAt(0) >= 65 &&
-          elem.charCodeAt(0) <= 90) ||
-        (elem.charCodeAt(0) >= 97 && elem.charCodeAt(0) <= 122)
-      ) {
-        elem = String.fromCharCode(elem.charCodeAt(0) - shift);
-        encrypteddata.push(elem);
-        return;
-        //console.log(elem)
-      }
-      encrypteddata.push(elem);
-    });
-    console.log(encrypteddata.join(""));
-    const encrypteddatatext = encrypteddata.join("");
-    fs.writeFile(newpath, encrypteddatatext, (err) => {
+
+  const encrypteddata = [];
+
+  if (inputpath) {
+    fs.readFile(inputpath, "utf-8", (err, content) => {
       if (err) {
         throw err;
       }
-      console.log("file has been decrypted");
+      //console.log(content);
+      const inputdata = content.split("");
+
+      inputdata.forEach((elem) => {
+        if (
+          (elem.charCodeAt(0) &&
+            elem.charCodeAt(0) >= 65 &&
+            elem.charCodeAt(0) <= 90) ||
+          (elem.charCodeAt(0) >= 97 && elem.charCodeAt(0) <= 122)
+        ) {
+          if (elem.charCodeAt(0) >= 97 && elem.charCodeAt(0) <= 122) {
+            elem = String.fromCharCode(
+              ((elem.charCodeAt(0) - 97 + shift) % 26) + 97
+            );
+          } else {
+            if (elem.charCodeAt(0) >= 65 && elem.charCodeAt(0) <= 90) {
+              elem = String.fromCharCode(
+                ((elem.charCodeAt(0) - 65 + shift) % 26) + 65
+              );
+            }
+          }
+        }
+        encrypteddata.push(elem);
+        //console.log(encrypteddata);
+      });
+      //console.log(encrypteddata.join(""), "log1");
+      //console.log(encrypteddata.join(""), "log");
+      const encrypteddatatext = encrypteddata.join("");
+      if (outputpath) {
+        console.log(outputpath);
+        fs.appendFile(outputpath, `${encrypteddatatext}\n`, (err) => {
+          if (err) {
+            throw err;
+          }
+          console.log("file has been encrypted");
+        });
+        return;
+      }
+      process.stdout.write(encrypteddatatext);
     });
-  });
+  } else {
+    process.stdin.on("readable", () => {
+      const chunk = process.stdin.read();
+      if (chunk !== null) {
+        //console.log(chunk);
+        //process.stdout.write(`data: ${chunk}`);
+        const inputdata = chunk.toString().split("");
+
+        inputdata.forEach((elem) => {
+          if (
+            (elem.charCodeAt(0) &&
+              elem.charCodeAt(0) >= 65 &&
+              elem.charCodeAt(0) <= 90) ||
+            (elem.charCodeAt(0) >= 97 && elem.charCodeAt(0) <= 122)
+          ) {
+            if (elem.charCodeAt(0) >= 97 && elem.charCodeAt(0) <= 122) {
+              elem = String.fromCharCode(
+                ((elem.charCodeAt(0) - 97 + shift) % 26) + 97
+              );
+            } else {
+              if (elem.charCodeAt(0) >= 65 && elem.charCodeAt(0) <= 90) {
+                elem = String.fromCharCode(
+                  ((elem.charCodeAt(0) - 65 + shift) % 26) + 65
+                );
+              }
+            }
+          }
+          encrypteddata.push(elem);
+          //console.log(encrypteddata);
+          //console.log(encrypteddata);
+        });
+        const encrypteddatatext = encrypteddata.join("");
+        if (outputpath) {
+          console.log(outputpath);
+          fs.appendFile(outputpath, `\n${encrypteddatatext}`, (err) => {
+            if (err) {
+              throw err;
+            }
+            console.log("file has been encrypted");
+          });
+          return;
+        }
+        process.stdout.write(encrypteddatatext);
+      }
+    });
+  }
 };
 
 const program = new commander.Command();
@@ -117,29 +114,27 @@ const program = new commander.Command();
 program
   .option("-s, --shift <number>", "encryption/decryption shift", parseInt)
   .option("-i, --input <path>", "input file path")
-  .option("-o, --output <path>", "output file path", "stdout")
+  .option("-o, --output <path>", "output file path")
   .option("-a, --action <type>", "action type (encode or decode)")
   .parse(process.argv);
 
-//program.parse(process.argv);
-
 const options = program.opts();
-console.log(options);
-process.stdout.write("hey");
+
 const shift = options.shift !== undefined ? options.shift : "nosauce";
-const inputpath1 = path.join(__dirname, options.input);
-const outputpath1 = path.join(__dirname, options.output);
+
+let outputpath1 = "";
+let inputpath1 = "";
+
+if (options.input !== undefined) {
+  inputpath1 = path.join(__dirname, options.input);
+}
+if (options.output !== undefined) {
+  outputpath1 = path.join(__dirname, options.output);
+}
 if (options.action === "encode") {
   encryption(shift, inputpath1, outputpath1);
 }
-// if( options.action === "decode") {
-//     encryption(shift, inputpath1, outputpath1);
-// }
-//const shift = options
-//if (options.shift) console.log(shift);
-//console.log("pizza details:");
-//if (options.small) console.log("- small pizza size");
-//if (options.pizzaType) console.log(`- ${options.pizzaType}`);
-//createfile()
-//encryption(53);
-//decryption(53)
+if (options.action === "decode") {
+  const decription = true;
+  encryption(shift, inputpath1, outputpath1, decription);
+}
