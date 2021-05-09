@@ -11,7 +11,7 @@ function inputStream(inputpath) {
   return rStream;
 }
 function outputStream(outputpath) {
-  const wStream = fs.createWriteStream(outputpath);
+  const wStream = fs.createWriteStream(outputpath, { flags: "a" });
   wStream.on("error", (err) => {
     //console.log(err);
     process.stderr.write("файл не найден или нет доступа к нему");
@@ -31,9 +31,10 @@ class EncodeChunk extends Transform {
     this.push(transformChunk);
     callback();
   }
-  //   _flush(callback) {
-  //     this.push(null);
-  //   }
+  _flush(callback) {
+    this.push(null);
+    callback();
+  }
 }
 
 //const transformStream = new EncodeChunk(encode, shift);
