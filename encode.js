@@ -1,4 +1,4 @@
-function encode(content) {
+function encode(content, shift) {
   const encrypteddata = [];
   const inputdata = content.split("");
 
@@ -26,4 +26,4 @@ function encode(content) {
   const encrypteddatatext = encrypteddata.join("");
   return encrypteddatatext;
 }
-module.exports = text;
+module.exports = encode;
